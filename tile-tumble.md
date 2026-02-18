@@ -1,121 +1,153 @@
 # Tile Tumble - Detailed Research & Build Notes
 
 ## Intent
-Single document for Game 1 from the original ideas list: a simple, implementation-friendly match-3 tile game with a stronger design backbone and development plan.
+Single production-focused document for Game 1 from the original ideas list: a mobile-first match-3 game with deterministic puzzles, gentle pacing, and a release-ready retention loop.
 
 ## Quick summary
-Tile Tumble keeps the classic easy-to-learn swap-and-match loop while adding modern match-3 hooks that improve retention: low-friction onboarding, meaningful rewards, predictable patterns, and optional progression systems with clear pacing.
+Tile Tumble keeps the classic swap loop and adds modern retention and anti-friction systems: short onboarding, forgiving early failure, clear board goals, and monetization that rewards optional replay instead of punishing drop-off.
 
 ## Source-grounded observations
-Research and best-practice reviews around tile puzzle/casual game design suggest these principles:
-- Manual level design beats fully procedural generation for match-3 because it better controls player difficulty, pacing, and emotion.
-- Casual titles succeed with very small core verbs (tap, drag, swap) and one-handed mobile accessibility.
-- Early onboarding and a clear, low-risk entry loop are critical, then mechanics should be added gradually.
-- Match-3 systems should feel rewarding even on imperfect play; low penalty makes sessions feel less stressful.
-- Reward pulses, cascades, and visual clarity are core engagement drivers.
-- Live-ops content cadence and tuning by actual attempts/time data improve retention more than static level plans.
+Research and industry practice for hyper-casual and match-3 loops suggest:
+- Manual board authorship is the strongest control mechanism for puzzle pacing, while small random bonuses can improve replayability.
+- One-handed touch (tap + drag) with a visible first action is the single largest early-retention lever in mobile onboarding.
+- Early progression should be low risk: avoid hard fail states before players see multiple clear win conditions.
+- Match confidence improves with immediate, short feedback loops that close each action in under a second.
+- Repeat frustration lowers when failures are recoverable through retries, not through hidden penalties.
+- Retention tuning is most stable when difficulty changes are small and measured against board-level KPIs.
 
 Sources used:
+- https://www.gamedeveloper.com/design/admiring-the-game-design-in-hyper-casual-games
 - https://www.gamedeveloper.com/design/smart-casual-the-state-of-tile-puzzle-games-level-design-part-1
-- https://medium.com/design-bootcamp/design-analysis-of-match-3-games-fb63879ecd8f
+- https://www.gameanalytics.com/blog/hyper-casual-game-common-mistakes
 - https://gamedesignskills.com/game-design/casual/
 
 ## Refined game profile
 - Name: Tile Tumble
-- Genre: Casual puzzle (match-3)
-- Core action: swap adjacent tiles to make matches of three+ and trigger cascades.
-- Primary appeal: instant recognition-based play with short, replayable rounds.
-- Device/UX: portrait phone/tablet, one-hand friendly.
+- Genre: Match-3 / casual puzzle
+- Core action: select and swap adjacent tiles to create matches of three or more
+- Primary appeal: fast recognition, short replay loops, and clear objectives
+- Device/UX: portrait phone/tablet, one-handed friendly board interaction
+- Economy style: soft currency pacing plus rewarded-video helpers and cosmetics progression
 
 ## Core loop (v2)
-1. Player sees a board with a clear objective (score, target score, or clear blockers).
-2. Player makes one legal swap.
-3. Match resolves, tiles disappear, gravity settles the board, and cascades happen.
-4. Player receives immediate micro-reward feedback (score, particle burst, sound, small text pop).
-5. Board may add a small obstacle, timer pressure, or move limit depending on level type.
-6. When win/lose condition hits, next board is offered with a short summary and clear incentive to continue.
+1. Player opens a board with one visible objective and one visible score target.
+2. Player makes one adjacent swap.
+3. Matches resolve, points are awarded, gravity settles, and cascades continue.
+4. Player gets immediate feedback through audio, particles, and score text.
+5. Board difficulty pressure rises through move limit, blocker count, or objective complexity.
+6. Board ends with a short summary and clear next-step action.
+7. Player can retry instantly, or continue to next board when objectives are met.
 
 ## Design targets for build quality
-- Session target: 90-120 seconds for an easy board, 180 seconds for first challenge board.
-- Failure friction: avoid hard stops; use move boosts, short retries, and one mild penalty mechanic.
-- Learnability: reveal the full move vocabulary by level 4 at latest.
-- Visual contrast: tile shapes and colors must be instantly distinguishable.
-- Retention rhythm: 3-day, 7-day, 14-day micro-goals visible via account map.
+- FTUE window: player should complete first legal move within 8 seconds.
+- First board completion target: 85%+ for new players in seeded cohort.
+- Session target: 90-120 seconds for easy boards, 120-180 seconds for challenge boards.
+- Anti-frustration target: no single board with rage-abort share above 12%.
+- Learnability target: expose all core move types by level 4.
+- Distinctiveness target: board readability passes color-blind and low-vision presets.
+- Retention rhythm: visible milestones at D1, D3, D7, and week 2.
 
 ## Board rules and mechanics
+
 ### Suggested base board
-- 8x8 grid at launch
-- 6 tile variants
-- Standard match: 3, 4, 5 rows/columns
-- Match score multipliers by combo or chain length
+- Launch profile: 8x8 grid, 6 tile types, top-fill gravity.
+- Match rules: 3, 4, and 5 tile lines, with stable scoring multipliers.
+- Cascades are rewarded with chain-based bonus tiers.
+- Retry policy: one free immediate retry, then one rewarded ad retry before currency spend.
+- No board should spawn with zero legal swap.
 
-### Win/lose condition variants
-- Score target within move limit (easy)
-- Clear fixed blockers/objectives (medium)
-- Reach a “path tile” in under N moves (advanced)
+### Win and lose condition variants
+- Easy: hit score target under move limit.
+- Core campaign: clear blockers/objectives.
+- Mid-tier: route objective plus score target.
+- Advanced: dual objective boards (clear + speed/chain constraints) with lower failure harshness.
 
-### Difficulty shaping
-- Easy start: no blockers, generous board, no move pressure first 3 boards.
-- Middle start: limited boosters, one blocker per board, moderate target.
-- Late start: multi-objective boards (score + clear + route), still avoid no-move deaths too often.
-- Track attempts per board to tune; avoid binary pass-rate obsession.
+### Difficulty shaping rules
+- Level 1-4: no blockers, generous board, visible objective.
+- Level 5-12: one blocker family and moderate pressure.
+- Level 13-20: mixed objectives, light risk modifiers.
+- Level 21+: rotating pressure families and optional boosters.
+- All boards are authored and validated by solveability checks before release.
 
-## Fun mechanics (research-grounded)
-- Pattern recognition satisfaction: clear color/shape grammar and predictable matching rules.
-- Completion drive: players like “fixing” board disorder through short goals.
-- Momentum rewards: cascades and board-clearing chain events increase perceived control and fun.
-- Loss aversion control: hearts/move replenishment and retries are safer than repeated hard blocks.
+### Anti-frustration controls
+- No no-move deadlocks for new players.
+- If a board creates repeated failure in a row, inject a guaranteed recovery assist.
+- Keep board failure states soft; preserve player progress and present a clear retry path.
 
-## Additional idea pack for Tile Tumble
-### 1) Seasonal Tiles (key twist)
-Introduce board-wide seasonal tile sets every few levels:
-- Frost season: tiles freeze neighbors after each match unless player uses a thaw booster.
-- Lava season: blocked areas become fragile, collapsing after two adjacent clears.
-- Crystal season: 2x2 area match creates one clear burst instead of one line clear.
+## Fun mechanics
+- Pattern recognition is kept central; novelty comes from objective and event layers.
+- Clear short goals reduce abandonment on difficult boards.
+- Cascades remain the strongest retention signal; early boards target shorter but frequent chain moments.
+- Loss aversion is reduced with hearts, move refunds, and limited retries.
+- Board journal style accomplishments provide low-friction social bragging.
 
-Why it stays memorable: same core system, new puzzle language every few levels.
+## Optional mechanics pack
 
-### 2) Clutter Quota mode
-Every board has a “clutter meter” shown on HUD. Extra points are gained for removing clutter tiles quickly with chains. This adds urgency without forcing strict timers.
+### 1) Seasonal tile moods
+Add recurring tile behavior changes every ~12 boards:
+- Frost mood: neighboring tiles lock briefly after any match and require a thaw tool.
+- Ember mood: a 2-step sparkle score bonus after a large match.
+- Crystal mood: two-by-two burst when a 4-match lands.
+
+### 2) Clutter meter
+Visible clutter meter tracks board quality cleanup speed and encourages soft urgency without timers.
 
 ### 3) Neighborhood goals
-Chain goals across 3 boards (ex: light 3 lantern tiles total) to encourage planning over one-off board solving.
+Three-board mini-goals encourage continuity (example: light 3 lantern tiles over a small stretch of boards).
 
-### 4) Soft daily event board
-Daily board with one rotating rule modifier and a guaranteed 4-match in first 10 moves.
+### 4) Rotating event board
+Daily board with a guaranteed 4-match window and one rotating rule modifier.
 
 ### 5) Board journal
-Keep a simple “found combos” log (e.g., first 4-match, first 5-match, 10-chain board). Works as low-stakes social bragging.
+Collect first-time accomplishments such as first 4-match, first 10-chain board, or no-hint clear.
 
-## Economy and retention ideas
-- Soft currency: Spark (common) for retries and small boosts.
-- Premium currency: Ember (premium) for one-time board hints, daily reset, cosmetic themes.
-- Gentle ads: optional rewarded ad for one free retry or one board hint.
-- Progression gate: star constellations unlock board packs, never locked behind too many long waits.
+## Economy and monetization
+- Soft currency: Spark for retries, minor boosters, and one-time helper utility.
+- Premium currency: Ember for skip helpers, cosmetic themes, and convenience tools.
+- Rewarded ads should only be offered at meaningful checkpoints.
+- Launch ad guardrails:
+  - No interstitial ads before board 4 for new users.
+  - First interstitial only after 2 board completions.
+  - Maintain 20-40 second cooldown between ad opportunities.
+- Progression unlocks favor content and cosmetic value first, then utility.
 
 ## Content and level plan
-- Phase 1 MVP (5-7 days): board engine, base matching rules, score+move loops, 60 boards, one seasonal twist, basic UI.
-- Phase 2 (following week): 40-60 more boards, daily event, board journal, retry economy.
-- Phase 3: weekly live-ops cycle with 2 puzzle variants and 1 new seasonal tile rule.
+- Phase 1 (week 1): board engine, core loop, onboarding, 40-50 authored boards, one seasonal system.
+- Phase 2 (week 2): +30 boards, clutter meter, neighborhood goals, retry economy.
+- Phase 3 (week 3+): weekly ops with 2 board families and 1 rotating mechanic.
 
 ## Testing checkpoints (before release)
-- FTUE test: can a new player explain objective and make first legal move in <10 seconds?
-- First board completion rate: 85% target first-time users for first 3 boards.
-- Retry abuse check: no board should force more than 12% aborts by frustrated users.
-- Retention proxy: level 10 completion and median moves/board after 24h should stay near target.
+- FTUE test: first objective understanding in under 8 seconds.
+- FTUE success: first board first-attempt completion target 85% for first 1,000 sessions.
+- Retry health: rage-abort rate below 12%, retry-to-retry latency trending down.
+- Retention proxy: level 10 completion and board swap-to-completion ratio should not degrade at release.
+- Accessibility checks: color-blind contrast and touch target size must pass manual QA.
 
 ## Production notes from research
-- Build level data-driven from day one (JSON board states, constraints, goals).
-- Keep game over as a soft state: reduce penalties before introducing strict failure.
-- Add telemetry early: board id, attempted swaps, cascades, boosts used, abandon points.
-- Validate any new tile mechanic with two A/B variants before broad roll-out.
+- Use data-driven board definitions from day one (`board_id`, `goal_type`, `pressure_type`, `retry_profile`).
+- Keep fail states soft for first 10 boards, then introduce tighter pressure gradually.
+- Track outcomes by board_id and attempt context before any global tuning changes.
+- Validate each new mechanic with controlled A/B flags and release notes.
+
+## Game 1 task ledger
+
+### Completed
+- `tile-tumble.md` rewritten into a production-oriented design and tuning blueprint.
+- Companion docs planned and added for controls, tuning, and analytics.
+- Explicit anti-frustration, ad guardrail, and onboarding targets defined.
+
+### Pending
+- Tune exact DDA, reward, and ad-frequency values from first 5k sessions.
+- Decide leaderboard scope (local vs global) for launch.
+- Confirm board-journal sharing scope and privacy defaults.
 
 ## Open questions for next phase
-1) Which core fantasy should we choose: clean modern or fantasy-forest style?
-2) Do we want a competitive ladder or just a campaign map first?
-3) Should ads be optional early (default off for premium-lite flow) or always present for free users?
+1. Start with clean geometric visual language or themed world art?
+2. Launch leaderboard as local campaign-only or global rank from day one?
+3. Are ad-free premium upgrades allowed at launch, or delayed to later phases?
+4. How frequently should seasonal moods rotate in early weeks?
 
-## Suggested next doc updates
-- Add a separate `tile-tumble-board-spec.md` for exact tile data format.
-- Add `tile-tumble-analytics.md` with KPI definitions and dashboards.
-- Add `tile-tumble-monetization.md` with economy guardrails and economy balancing notes.
+## Suggested companion docs
+- tile-tumble-controls.md: touch contract, touch filtering, onboarding script, and accessibility.
+- tile-tumble-tuning.md: board bands, difficulty bands, DDA, and tuning workflow.
+- tile-tumble-analytics.md: event model, KPI sheet, dashboards, and alert thresholds.
