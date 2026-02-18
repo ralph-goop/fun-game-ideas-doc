@@ -160,13 +160,17 @@ At fixed distances, introduce a one-run sanctuary lane where damage can be avoid
 - Validate generated obstacle chunks so each has a guaranteed recovery option and no unavoidable failure.
 - Prefer authored pattern chunks over fully random spawns in early tiers.
 
-## Active follow-up tasks for Game 2
-- Incorporate the deep-research outputs from `trun_04740bf111ed4e89bfb8a4d4e2268a21` into concrete tuning thresholds in companion docs.
-- Set and monitor mission conversion and D1 metrics against explicit targets.
-- Finalize DDA formula and guardrails with data from first 5k run cohort.
-- Add and version explicit tuning tables (`tap-rocket-tuning.md`) for `tap`, `obstacle_density`, and `difficulty_index` by segment.
-- Add a standard `run_state` enum and retry reason taxonomy in `tap-rocket-analytics.md` and implement in telemetry.
-- Keep this file and three companion docs in sync whenever assumptions are adjusted.
+## Game 2 task ledger
+### Completed
+- Deep-research task `trun_04740bf111ed4e89bfb8a4d4e2268a21` finished and outputs reviewed.
+- `tap-rocket-tuning.md`, `tap-rocket-controls.md`, and `tap-rocket-analytics.md` updated with concrete values.
+- Open-loop onboarding and fairness targets now include 7-10 second FTUE window and 10-second no-fail rule.
+
+### Pending review and execution tasks
+- Finalize the DDA cap values after first 5k-session telemetry review.
+- Add and version explicit `run_state` and `retry_reason` enums in analytics payloads.
+- Convert mission/reward ideas into concrete board data and rollout cadence docs.
+- Add a release checklist that maps every tuning rule to a measurable A/B objective.
 
 ## Open questions for next phase
 1) Keep hold-for-stronger-boost disabled at launch and unlock only after explicit milestone?
