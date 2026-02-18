@@ -20,6 +20,11 @@ Tile Tumble uses a low-friction touch model: one drag to swap adjacent tiles, vi
 - Input latency budget: 80ms max from release to board settle update on modern devices.
 - Consecutive taps/drag inputs while an animation is running are queued once and deduplicated.
 
+## Accessibility and platform guidance
+- iOS minimum touch target: 44x44 pt for action controls.
+- Android minimum touch target: 48dp for action controls.
+- Keep ad close button and key board controls at or above these sizes.
+
 ## Ambiguity handling
 - If input does not form a valid adjacent pair within 500ms, show subtle hint on nearest movable tile.
 - If user drags a tile where multiple swaps are possible, lock on dominant axis and ignore micro jitter.
@@ -63,3 +68,4 @@ Tile Tumble uses a low-friction touch model: one drag to swap adjacent tiles, vi
 - Invalid drag rate < 12% after board 3 in test cohorts.
 - Tap-to-continue latency should be < 120ms on target devices.
 - Color-blind and reduced-motion scenarios should preserve board readability.
+- Verify first-tap hint behavior works when player idles 3 seconds on each of first 3 levels.

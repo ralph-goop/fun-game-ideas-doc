@@ -14,12 +14,20 @@ Research and industry practice for hyper-casual and match-3 loops suggest:
 - Match confidence improves with immediate, short feedback loops that close each action in under a second.
 - Repeat frustration lowers when failures are recoverable through retries, not through hidden penalties.
 - Retention tuning is most stable when difficulty changes are small and measured against board-level KPIs.
+- Manual-only design is too slow for 10k+ level scale, while uncontrolled generation introduces solvability risk. Hybrid manual+procedural with solver validation gives quality and throughput.
+- Fair DDA should reduce rage exits, not increase monetization friction by making levels suddenly harder for paying users.
+- Interstitial ads are best placed at natural breaks and paced for retention; rewarded ads are strongest when used as optional recovery.
+- Technical quality thresholds (ANR/crash) materially impact store visibility and retention in 2026 mobile ecosystems.
 
 Sources used:
 - https://www.gamedeveloper.com/design/admiring-the-game-design-in-hyper-casual-games
 - https://www.gamedeveloper.com/design/smart-casual-the-state-of-tile-puzzle-games-level-design-part-1
 - https://www.gameanalytics.com/blog/hyper-casual-game-common-mistakes
 - https://gamedesignskills.com/game-design/casual/
+- https://www.gamigion.com/match-3-level-design-principles/
+- https://www.mdpi.com/2079-9292/12/19/4098
+- https://android-developers.googleblog.com/2022/10/raising-bar-on-technical-quality-on-google-play.html
+- https://support.google.com/googleplay/android-developer/answer/9844486?hl=en
 
 ## Refined game profile
 - Name: Tile Tumble
@@ -38,6 +46,26 @@ Sources used:
 6. Board ends with a short summary and clear next-step action.
 7. Player can retry instantly, or continue to next board when objectives are met.
 
+## First 3-level onboarding plan
+
+### Level 1: Hook (10-12 moves)
+- Objective: score goal or clear-X tiles.
+- No blockers.
+- Board launch guarantees at least one legal move.
+- First move uses ghost-hand guidance; if idle for 3 seconds, one subtle hint appears.
+- Target outcome: near-100% completion, clear success loop.
+
+### Level 2: Objective teaching (12-14 moves)
+- Introduce one special tile behavior with a spotlight on formation flow.
+- No blockers; reinforce “create objective to progress.”
+- Target outcome: ~95% completion.
+
+### Level 3: First friction (14-16 moves)
+- Introduce first 1-HP blocker in a non-critical tile lane.
+- Keep recovery path obvious; no forced fail states.
+- If failed, offer one optional rewarded continue with move/top-up grant.
+- End board with saga-map continuation cue to establish long-term objective.
+
 ## Design targets for build quality
 - FTUE window: player should complete first legal move within 8 seconds.
 - First board completion target: 85%+ for new players in seeded cohort.
@@ -55,6 +83,15 @@ Sources used:
 - Cascades are rewarded with chain-based bonus tiers.
 - Retry policy: one free immediate retry, then one rewarded ad retry before currency spend.
 - No board should spawn with zero legal swap.
+
+### Production pipeline (manual vs procedural)
+- FTUE and all progression anchors (levels 1-20): manual.
+- Midgame and bulk content (21+): hybrid generation, then designer selection and pass.
+- Auto-validation checklist before release:
+  - solver win-rate pass under the move limit
+  - solvability check and guaranteed-opener requirement
+  - difficulty score within target band
+  - dead-board prevention and auto-reshuffle test
 
 ### Win and lose condition variants
 - Easy: hit score target under move limit.
@@ -108,13 +145,20 @@ Collect first-time accomplishments such as first 4-match, first 10-chain board, 
 - Launch ad guardrails:
   - No interstitial ads before board 4 for new users.
   - First interstitial only after 2 board completions.
-  - Maintain 20-40 second cooldown between ad opportunities.
+  - Interstitials only between board sessions (never in active play).
+  - Enforce 3-5 minute interval and hard cap 1-3 per session.
+  - After rewarded video, reset interstitial cooldown to reduce fatigue.
 - Progression unlocks favor content and cosmetic value first, then utility.
+- Use rewarded video as primary monetization, with interstitials later and only at session-safe points.
 
 ## Content and level plan
 - Phase 1 (week 1): board engine, core loop, onboarding, 40-50 authored boards, one seasonal system.
 - Phase 2 (week 2): +30 boards, clutter meter, neighborhood goals, retry economy.
 - Phase 3 (week 3+): weekly ops with 2 board families and 1 rotating mechanic.
+
+## Technical quality gates
+- Keep player-perceived ANR under 0.47% and crash rate under 1.09%.
+- If any device segment shows >8% issue rate, gate release to that segment or hotfix quickly.
 
 ## Testing checkpoints (before release)
 - FTUE test: first objective understanding in under 8 seconds.

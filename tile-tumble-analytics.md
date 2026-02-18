@@ -47,6 +47,13 @@ Tile Tumble analytics should center on board-level difficulty health and retry b
 - `app_version`
 - `schema_version`
 
+### Additional required fields
+- `first_3_board_state`
+- `reshuffle_count`
+- `device_model`
+- `network_state`
+- `rewarded_ad_type`
+
 ## Event meaning
 - `ftue_step`: 1 = board intro, 2 = first legal move prompt shown, 3 = first legal move made, 4 = first objective complete, 5 = first fail.
 - `swap_input`: include `from_cell`, `to_cell`, `is_legal`, `input_latency_ms`.
@@ -62,12 +69,16 @@ Tile Tumble analytics should center on board-level difficulty health and retry b
 - First legal swap latency: target <= 8s.
 - First board first-attempt completion: target >= 85%.
 - First 3 board completion share: should remain within planned band.
+- FTUE first-tap target: under 8s.
 
 ### Engagement and retention
 - D1 session_completion_2boards: target >= 40%.
 - D3 return_rate: target 25%+.
 - Median boards per session by cohort.
 - Median swaps per completed board.
+- D1 retention target: 40%.
+- D7 retention target: 15%.
+- D30 retention target: 5%.
 
 ### Frustration and flow
 - Rage-abort rate: board-level and global.
@@ -75,11 +86,18 @@ Tile Tumble analytics should center on board-level difficulty health and retry b
 - Retry depth: retries per fail and second retry conversion.
 - Move exhaustion events: track at early and late tiers.
 
+### Technical stability
+- ANR rate target: < 0.47%.
+- Crash rate target: < 1.09%.
+- Device-tier anomaly: any device model above 8% issue rate requires segment-level action.
+
 ### Monetization health
 - rewarded_ad_offer_count and completion rate.
 - rewarded_ad_revenue_per_1k_sessions.
 - interstitial_compliance: respect cooldown and board index constraints.
 - ad_to_retry conversion by board tier.
+- Rewarded-ad opt-in target: >= 40% where offered.
+- Interstitial policy watch: 1-3 per session max, 3-5 minute spacing.
 
 ### Gameplay quality
 - Match success by board objective.
@@ -92,12 +110,14 @@ Tile Tumble analytics should center on board-level difficulty health and retry b
   - session volume drop > 15%
   - onboarding completion < 75%
   - rage-abort spike > 12%
+- Immediate technical: ANR > 0.47% or crash > 1.09%.
 - Retention:
   - D1 to D3 dip of 5 points in 24h
   - board 1 completion below 85% for 2 consecutive monitoring windows
 - Monetization:
   - rewarded ad completion below 30% when offered at constant frequency
   - interstitial frequency above threshold before board 4
+  - interstitial spacing under 3 minutes or more than 3 per session
 
 ## Dashboards
 1. Onboarding funnel: session_start -> ftue_step3 -> first board complete.
@@ -105,6 +125,7 @@ Tile Tumble analytics should center on board-level difficulty health and retry b
 3. Friction ladder: difficulty_index vs completion trend and rage-abort trend.
 4. Monetization view: rewarded and interstitial placement conversion.
 5. Live tuning watchlist: board-level KPIs with confidence intervals.
+6. Technical dashboard: ANR/crash by device model and OS.
 
 ## Reporting cadence
 - Daily: data completeness checks + fail reason distribution.
@@ -117,3 +138,4 @@ Tile Tumble analytics should center on board-level difficulty health and retry b
 - Validate schema on server before storing high-volume analytics.
 - Flag malformed payloads for immediate triage.
 - Keep all board IDs and game version ids in every session-scoped event.
+- Track `reshuffle_reason` and `rewarded_ad_type` as controlled enums.

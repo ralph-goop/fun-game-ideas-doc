@@ -24,6 +24,15 @@ Start with conservative, additive tuning: board complexity, objective density, b
   - Medium: 1 free + 1 rewarded-ad retry
   - Hard: 1 free + 2 optional ad retries
 
+## Content production architecture
+- FTUE + first 20 boards: fully manual for deterministic learning and retention quality.
+- Mid-to-late content: AI-assisted procedural generation with human selection.
+- Generators must pass:
+  - solvability checks
+  - guaranteed-opener validation
+  - objective difficulty prediction within tolerance band.
+- Designers should maintain a candidate pool and lock only top-scoring boards from solver/AI runs.
+
 ## Quality bands by board number
 
 ### Early phase
@@ -59,6 +68,10 @@ Start with conservative, additive tuning: board complexity, objective density, b
 - DDA actions:
   - If fail rate > 32% and rage-abort > 12%, reduce blocker_pressure by 1 level for next board.
   - If fail rate < 18% and no rage-aborts, increase move_pressure only (never +1 band at once).
+- Fairness rule: DDA must not introduce post-win punitive hardness or monetization-linked difficulty shifts.
+- Fail-streak relief:
+  - On 3 consecutive losses, add one relief lever (e.g., +2 moves or a softened blocker layer) on next attempt.
+- Recovery path: ensure dead-boards reshuffle to legal state before classifying as hard-fail.
 - Safety caps:
   - Objective_entropy cannot increase by more than 1 level per 8 boards.
   - Move pressure changes max +1 tile reduction or +4 board moves per intervention.
@@ -79,8 +92,9 @@ Start with conservative, additive tuning: board complexity, objective density, b
 - Increase ad conversion targets after 7-day stability review.
 - Interstitial policy:
   - no ads before board 4
-  - no repeated ads in under 35 seconds
+  - no repeated ads in under 3-5 minutes
   - no ads during goal explanation flow
+  - cap 1-3 interstitials per session
 
 ## Tuning workflows
 1. Pull 7-day window for key KPIs.
@@ -94,6 +108,7 @@ Start with conservative, additive tuning: board complexity, objective density, b
 - If board 10 completion exceeds 95%, introduce one medium blocker at board 12 and reduce move headroom by 2.
 - If same-board retries exceed 2.0 per session, add one recovery assist option for that board family.
 - If no player can reach mid-phase by day 5, slow DDA and extend early bands by 2 boards.
+- If first-3 board first-try completion dips below 90%, keep blocker_pressure at minimum and increase move headroom by 2.
 
 ## Data schema for tuning
 - `boards.json` fields:
