@@ -7,19 +7,24 @@ Single document for Game 2 from the original ideas list: a one-button upward-boo
 Tap Rocket keeps control to a single tap while layering replay value with obstacle rhythm, clear skill progression, and controlled failures. The core loop focuses on small perfect taps into forgiving-but-shaping tunnels, then quick restarts with immediate performance visibility.
 
 ## Source-grounded observations
-A few practical patterns emerged from design references and postmortem-style analysis:
-- One-button interaction lowers entry friction and is especially effective for casual conversion, but users may misinterpret press/hold intent, so control semantics must be taught explicitly when hold mechanics are used.
-- In Flappy Bird, simple, predictable physics (consistent jump impulse + gravity response) helped players learn by repeating runs instead of guessing.
-- One-touch endless runners are a known mobile pattern (examples include Jetpack Joyride and Flappy Bird), and short early onboarding windows are critical before adding high-density obstacles.
-- Simple controls should be responsive and immediate; delayed or opaque outcomes quickly feel like input lag and kill retry intent.
-- Retention improves when failure is followed by easy recovery and frequent micro-goals (rather than only a hard death wall).
+A few practical patterns emerged from design references and recent deep research:
+- The first 7-10 seconds matter most for Day 0 retention, so tutorial content should be invisible and gameplay-first.
+- One-button interaction lowers entry friction for casual players, but control semantics must be taught explicitly when hold mechanics are used.
+- In Flappy Bird, simple and predictable physics (consistent jump impulse + gravity response) let players learn through short repetition.
+- One-touch endless runners (Jetpack Joyride and Flappy Bird style) work best when early onboarding windows are forgiving and low-risk.
+- Responsive input and clear feedback are essential; delayed or opaque control outcomes kill retry intent quickly.
+- Fairness perception comes from conservative hitboxes and visible near-miss moments more than strict pixel-perfect collision rules.
+- Dynamic difficulty adjustment (DDA) can improve flow and reduce rage exits compared to static ramps.
+- Rewarded Video revives usually outperform forced interstitials when offered at choke points like run-end failures.
+- Strong early retention benchmarks for this class of game are close to D1 = 35-40%.
 
 Sources used:
-- https://blog.stevewetherill.com/2022/01/ea-air-hockey-designing-one-button.html?m=1
-- https://abagames.github.io/joys-of-small-game-development-en/restrictions/one_button.html
-- https://medium.com/@thomaspalef/game-design-analysis-of-flappy-bird-and-swing-copters-5c6df9fc10f0
-- https://www.gamedeveloper.com/design/endless-runner-games-how-to-think-and-design-plus-some-history-
-- https://gamedesignskills.com/game-design/player-retention/
+- https://www.gamedeveloper.com/design/admiring-the-game-design-in-hyper-casual-games
+- https://www.gameanalytics.com/blog/hyper-casual-game-common-mistakes
+- https://www.gameanalytics.com/blog/monetizing-hyper-casual-games
+- https://www.pocketgamer.biz/the-key-to-success-how-top-100-downloaded-games-implement-interstitial-ads-and-related-in-app-purchases/
+- https://www.gamedev.net/tutorials/game-design/game-design-and-theory/admiring-the-game-design-in-hyper-casuals-r5146/
+- https://dspace.cuni.cz/bitstream/handle/20.500.11956/148732/120396947.pdf?sequence=1&isAllowed=y
 
 ## Refined game profile
 - Name: Tap Rocket
@@ -38,17 +43,21 @@ Sources used:
 7. Returning players see a best-distance target and a best-of run with simple next-attempt goal.
 
 ## Design targets for build quality
+- First-play window: keep core feel clear and successful in the first 7-10 seconds.
 - Session target: 60-90 seconds for first loop; 120-second long-form runs by segment 8.
 - First-run onboarding target: player can safely clear first obstacle with >=85% success within 30 seconds.
+- First 10s safety rule: no run-ending failure before at least one successful tap and lane stabilization.
 - Forgiveness target: no single obstacle should be unrecoverable once entered.
 - Visibility target: every obstacle type must be readable in one glance at tap timing windows.
 - Retention rhythm: one short-term objective for first 3 runs, one weekly rhythm objective (streak/route milestone), and one long-term cosmetic milestone.
+- Retention benchmark: target D1 session completion to 2 runs at 45%+ and D1=35-40% overall target.
 
 ## Movement and obstacle systems
 ### Control scheme
 - Action input: single tap (full-screen touch), no swipes.
 - Optional advanced mode: short hold for small safety boost (introduced later only after users complete early levels).
 - Tap cooldown: brief minimum gap (e.g., 80-120ms) prevents accidental double input spam and keeps feel intentional.
+- Launch flow: start into active game loop first, overlaying only one short guidance callout that fades on first input.
 
 ### Corridor design
 - Auto-speed starts low; accelerates subtly at fixed distance checkpoints.
@@ -57,6 +66,12 @@ Sources used:
   - Zone B: alternating ceilings/floors and lateral walls
   - Zone C: moving hazards + gravity wells
 - Gravity wells invert gravity direction briefly and visually telegraph with warning ring and color cue.
+- Pattern bank approach: authored obstacle chunks with guaranteed safe path and explicit difficulty tags.
+- Early timing ramp (recommended):
+  - 0-10s: zero risk, wide lane, tutorial only
+  - 10-30s: low density static hazards
+  - 30-60s: medium density moving hazards
+  - 60s+: high density mixed hazards and challenge lanes
 
 ### Win/lose condition variants
 - Run 1-3: timed distance targets
@@ -66,6 +81,7 @@ Sources used:
 ### Failure shaping
 - If player taps too late repeatedly (e.g., 3 consecutive hits), offer one automatic stability assist before restart in daily/session contexts.
 - Spawn a recovery lane every N runs so players can recover from mistakes without resetting progression.
+- Input buffering/coyote behavior: accept tap slightly before obstacle state transitions where intent is clear.
 
 ## Progression and difficulty tuning
 ### Difficulty curve
@@ -81,12 +97,14 @@ Sources used:
   - `obstacles_hit_by_type`
 - Keep death reasons stable across sessions: no sudden 60-90% difficulty spikes at tier boundaries.
 - Use conservative speed bumps; pair each rise with at least one readable counter-arc.
+- Add DDA: shift speed/hazard density based on player outcome of last 3 runs to keep flow in target zone.
 
 ## Fun mechanics (research-grounded)
 - Predictability with pressure: deterministic movement rules + noisy obstacle variation.
 - Retry loop dopamine: immediate restart, score reset or retained progress, and one visible best this attempt goal.
 - Skill communication: each run should teach one timing intuition (tap cadence, gravity window, lane timing).
 - Twist economy: collecting a rare coin in danger zones grants one stored safeguard for future runs.
+- Meta goals: light mission track (three slots such as "collect 500 coins", "make 10 perfect gates") supports repeatability.
 
 ## Additional idea pack for Tap Rocket
 ### 1) Orbit Wells
@@ -113,13 +131,21 @@ At fixed distances, introduce a one-run sanctuary lane where damage can be avoid
 - Reward loop:
   - Rewarded video for one extra retry after failure
   - Rewarded video for one map preview after first 5 fails per session
+  - Limit revive ads to one per run to preserve run stakes
 - Progression gates:
   - Unlock ship skins by segment milestones
   - Unlock lane themes weekly in a predictable cadence
-- Minimal ad policy: avoid interruption on tap moments; place offers only on game-over and pause.
+- Ad placement policy:
+  - No hard ads in first 3-5 minutes of total gameplay
+  - Session 1: avoid interstitials; Session 2+: after 2-3 runs with 30-45s cooldown
+  - Keep rewarded options at game-over or optional non-intrusive preview moments
+- Missions for retention:
+  - 3-slot mission board (coin, distance, timing) every 24h
+  - Daily rewards with low friction claims to increase return likelihood
 
 ## Testing checkpoints
 - FTUE test: can a new player complete a no-obstacle opening and identify at least one recovery opportunity in <12 seconds?
+- FTUE clarity check: can core input be understood and executed in <7 seconds after first launch?
 - Onboarding clarity: first obstacle pass success rate target 85% for first-timers after tutorial.
 - Retry health check: at least 70% of failed players should restart within one attempt.
 - Difficulty calibration: no more than 2 consecutive run drops in median distance after each new tier launch.
@@ -131,25 +157,25 @@ At fixed distances, introduce a one-run sanctuary lane where damage can be avoid
 - Add analytics from round one: tap timing, lane entry position, first obstacle fail reason, retry source, retry mode used.
 - Test with different screen sizes and thumb reach; one-button should work equally one-handed.
 - Keep all gravity inversion mechanics behind a readable tutorial callout first time encountered.
+- Validate generated obstacle chunks so each has a guaranteed recovery option and no unavoidable failure.
+- Prefer authored pattern chunks over fully random spawns in early tiers.
 
 ## Active follow-up tasks for Game 2
-- Complete deep-research run `trun_04740bf111ed4e89bfb8a4d4e2268a21` and fold any additional quantitative recommendations into these docs.
-- Add missing source-backed thresholds if research returns hard numbers for:
-  - onboarding conversion and FTUE timings
-  - rewarded ad cadence and opt-in conversion
-  - interstitial placement cooldowns and acceptable interruption windows
-- Replace placeholder assumptions in controls/tuning with confirmed values from validated playtest telemetry.
-- Add a shared `run_state` enum and retry mode taxonomy in `tap-rocket-analytics.md` once final schema decision is made.
-- Add QA acceptance criteria for every open item in `tap-rocket-controls.md` and `tap-rocket-tuning.md`.
-- Track any new tasks from companion docs so all Game 2 work remains in one linked cluster.
+- Incorporate the deep-research outputs from `trun_04740bf111ed4e89bfb8a4d4e2268a21` into concrete tuning thresholds in companion docs.
+- Set and monitor mission conversion and D1 metrics against explicit targets.
+- Finalize DDA formula and guardrails with data from first 5k run cohort.
+- Add and version explicit tuning tables (`tap-rocket-tuning.md`) for `tap`, `obstacle_density`, and `difficulty_index` by segment.
+- Add a standard `run_state` enum and retry reason taxonomy in `tap-rocket-analytics.md` and implement in telemetry.
+- Keep this file and three companion docs in sync whenever assumptions are adjusted.
 
 ## Open questions for next phase
-1) Should tap input include hold-for-stronger-boost from release, or keep strictly tap-only for predictability?
+1) Keep hold-for-stronger-boost disabled at launch and unlock only after explicit milestone?
 2) Do we want one lane or two-lane choice after death recovery events?
 3) Should rewards prioritize short-term replays or long-form progression by default for initial audience?
 4) Do we need social features from day one (ghost runs / leaderboards), or launch with local-only ranking first?
+5) What DDA cap values feel safe on day one (speed, obstacle_density, gravity intensity)?
 
 ## Companion docs
-- tap-rocket-tuning.md: launch parameters and phase-based difficulty tables.
+- tap-rocket-tuning.md: launch parameters, phase tables, and DDA math.
 - tap-rocket-controls.md: input timing, control response, and onboarding script.
 - tap-rocket-analytics.md: KPIs, event taxonomy, and experiment alerts.
