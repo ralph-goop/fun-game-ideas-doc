@@ -6,6 +6,7 @@ Generated from Parallel Task Group: tgrp_619a14889a8244e282b63b39a8556c1c
 
 - Tile Tumble: [tile-tumble/README](tile-tumble/README.md), [design](tile-tumble/tile-tumble.md), [controls](tile-tumble/tile-tumble-controls.md), [tuning](tile-tumble/tile-tumble-tuning.md), [analytics](tile-tumble/tile-tumble-analytics.md)
 - Tap Rocket: [tap-rocket/README](tap-rocket/README.md), [design](tap-rocket/tap-rocket.md), [controls](tap-rocket/tap-rocket-controls.md), [tuning](tap-rocket/tap-rocket-tuning.md), [analytics](tap-rocket/tap-rocket-analytics.md)
+- Idle Bakery: [idle-bakery/README](idle-bakery/README.md), [design](idle-bakery/idle-bakery.md), [controls](idle-bakery/idle-bakery-controls.md), [tuning](idle-bakery/idle-bakery-tuning.md), [analytics](idle-bakery/idle-bakery-analytics.md)
 
 1. **Tile Tumble** *(Casual Puzzle)*
 - **Core loop:** Swap tiles to make 3+ matches, clear them, collect stars/points, and unlock boards.

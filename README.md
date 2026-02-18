@@ -16,6 +16,11 @@
   - `tap-rocket-controls.md`: input and UX control spec.
   - `tap-rocket-tuning.md`: progression and balance playbook.
   - `tap-rocket-analytics.md`: telemetry and KPI instrumentation.
+- `idle-bakery/`
+  - `idle-bakery.md`: design + build notes.
+  - `idle-bakery-controls.md`: input and UX control spec.
+  - `idle-bakery-tuning.md`: progression and balance playbook.
+  - `idle-bakery-analytics.md`: telemetry and KPI instrumentation.
 
 ## Documentation conventions
 
