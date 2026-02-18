@@ -76,9 +76,9 @@ Sources used:
 
 ### Difficulty controls
 - Tune via measured metrics:
-  - tap_to_obstacle_ratio: taps per 10s of run time
-  - first_retry_survival and median run duration
-  - obstacles_hit_by_type
+  - `tap_to_obstacle_ratio`: taps per 10s of run time
+  - `first_retry_survival` and `median run duration`
+  - `obstacles_hit_by_type`
 - Keep death reasons stable across sessions: no sudden 60-90% difficulty spikes at tier boundaries.
 - Use conservative speed bumps; pair each rise with at least one readable counter-arc.
 
@@ -131,6 +131,17 @@ At fixed distances, introduce a one-run sanctuary lane where damage can be avoid
 - Add analytics from round one: tap timing, lane entry position, first obstacle fail reason, retry source, retry mode used.
 - Test with different screen sizes and thumb reach; one-button should work equally one-handed.
 - Keep all gravity inversion mechanics behind a readable tutorial callout first time encountered.
+
+## Active follow-up tasks for Game 2
+- Complete deep-research run `trun_04740bf111ed4e89bfb8a4d4e2268a21` and fold any additional quantitative recommendations into these docs.
+- Add missing source-backed thresholds if research returns hard numbers for:
+  - onboarding conversion and FTUE timings
+  - rewarded ad cadence and opt-in conversion
+  - interstitial placement cooldowns and acceptable interruption windows
+- Replace placeholder assumptions in controls/tuning with confirmed values from validated playtest telemetry.
+- Add a shared `run_state` enum and retry mode taxonomy in `tap-rocket-analytics.md` once final schema decision is made.
+- Add QA acceptance criteria for every open item in `tap-rocket-controls.md` and `tap-rocket-tuning.md`.
+- Track any new tasks from companion docs so all Game 2 work remains in one linked cluster.
 
 ## Open questions for next phase
 1) Should tap input include hold-for-stronger-boost from release, or keep strictly tap-only for predictability?
